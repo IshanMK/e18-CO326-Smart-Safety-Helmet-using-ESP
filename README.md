@@ -1,5 +1,5 @@
 ___
-Smart Safety Helmet using ESP
+# Smart Safety Helmet using ESP
 ___
 
 ## CO326 - Project
