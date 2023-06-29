@@ -13,6 +13,7 @@ and then it will going to publish to the topic UOP/CO326/E18/11/Latest_get
 import paho.mqtt.client as mqtt
 import mysql.connector
 import json 
+from datetime import datetime
 
 # importing the credentials file
 from credentials import credentials
@@ -52,9 +53,13 @@ def retrieve_latest():
     # Process the retrieved data
     results = []
     for row in rows:
+
+        # each row will be a tuple so we need to access each property and create a json object
+        # as the time returns as timedelta function it needs to be converetd to str before publishing
         result = {
             "topic" : row[1],
-            "value" : row[2]       
+            "value" : row[2],
+            "updatedAt" : str(row[3])   
         }
         results.append(result)
 
