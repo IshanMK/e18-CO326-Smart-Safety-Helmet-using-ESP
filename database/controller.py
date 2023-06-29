@@ -13,7 +13,6 @@ and then it will going to publish to the topic UOP/CO326/E18/11/Latest_get
 import paho.mqtt.client as mqtt
 import mysql.connector
 import json 
-from datetime import datetime
 
 # importing the credentials file
 from credentials import credentials

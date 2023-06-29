@@ -62,7 +62,10 @@ def update_db(topic , payload):
 def on_connect(client, userdata, flags, rc):
     print(f"Connected to MQTT broker with result code: {rc}")
     # Subscribe to a topic upon successful connection
-    client.subscribe("UOP/CO326/E18/11/+")
+    client.subscribe("UOP/CO326/E18/11/Temperature")
+    client.subscribe("UOP/CO326/E18/11/Gas")
+    client.subscribe("UOP/CO326/E18/11/Sound")
+    client.subscribe("UOP/CO326/E18/11/Buzzer")
 
 # Callback function when a message is received on a subscribed topic
 def on_message(client, userdata, msg):
