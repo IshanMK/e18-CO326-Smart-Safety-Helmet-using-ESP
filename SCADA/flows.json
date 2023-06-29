@@ -1,0 +1,841 @@
+[
+    {
+        "id": "4f570ba73cb9775b",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "94082fc460167342",
+        "type": "mqtt in",
+        "z": "4f570ba73cb9775b",
+        "name": "MQTT IN",
+        "topic": "UOP/CO326/E18/11/Temperature",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "1aef09635993012d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 140,
+        "wires": [
+            [
+                "be7a6b7370454c11",
+                "86d7e0de8009ccf9"
+            ]
+        ]
+    },
+    {
+        "id": "f10a69a68eeea65d",
+        "type": "ui_text",
+        "z": "4f570ba73cb9775b",
+        "group": "39f8f4ea59532fc9",
+        "order": 1,
+        "width": "9",
+        "height": "1",
+        "name": "Sound",
+        "label": "Sound Level",
+        "format": "{{msg.value}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": true,
+        "font": "Times New Roman,Times,serif",
+        "fontSize": "20",
+        "color": "#000000",
+        "x": 670,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "fb1ef42de05545c8",
+        "type": "ui_text",
+        "z": "4f570ba73cb9775b",
+        "group": "39f8f4ea59532fc9",
+        "order": 2,
+        "width": "9",
+        "height": "1",
+        "name": "Gas",
+        "label": "Gas Level",
+        "format": "{{msg.value}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": true,
+        "font": "Times New Roman,Times,serif",
+        "fontSize": "20",
+        "color": "#000000",
+        "x": 670,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "360c7edaa25fb9be",
+        "type": "ui_gauge",
+        "z": "4f570ba73cb9775b",
+        "name": "Temperature",
+        "group": "39f8f4ea59532fc9",
+        "order": 3,
+        "width": "9",
+        "height": "4",
+        "gtype": "gage",
+        "title": "Temperature",
+        "label": "C",
+        "format": "{{msg.value}}",
+        "min": "0",
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "30",
+        "seg2": "45",
+        "diff": false,
+        "className": "",
+        "x": 690,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "fabc819121f09338",
+        "type": "mqtt in",
+        "z": "4f570ba73cb9775b",
+        "name": "MQTT IN",
+        "topic": "UOP/CO326/E18/11/Sound",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "1aef09635993012d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 200,
+        "wires": [
+            [
+                "a398b0f0f0db159c",
+                "86d7e0de8009ccf9"
+            ]
+        ]
+    },
+    {
+        "id": "3b75e39102751699",
+        "type": "mqtt in",
+        "z": "4f570ba73cb9775b",
+        "name": "MQTT IN",
+        "topic": "UOP/CO326/E18/11/Gas",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "1aef09635993012d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 260,
+        "wires": [
+            [
+                "6093a5b35169520c",
+                "86d7e0de8009ccf9"
+            ]
+        ]
+    },
+    {
+        "id": "be7a6b7370454c11",
+        "type": "function",
+        "z": "4f570ba73cb9775b",
+        "name": "Temperature",
+        "func": "// Splitting variables\n// get the message\nlet message = msg.payload;\n\n// Splitting \n// UID, Time, Temperature\nlet data = message.split(\"|\");\n\n// Define the output\nlet out = {};\n\n// Defining the object output\nout[\"value\"] = Number(data[2]);\nout[\"time_stamp\"] = data[1];\nout[\"UID\"] = data[0];\n\n// Return only the first value\nreturn out;\n\n// return Number(temperature);\n// return {\n//     \"value\": 10,\n// };",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 140,
+        "wires": [
+            [
+                "360c7edaa25fb9be",
+                "e0493623446faba8",
+                "a718f6103115820d"
+            ]
+        ]
+    },
+    {
+        "id": "e0493623446faba8",
+        "type": "ui_text",
+        "z": "4f570ba73cb9775b",
+        "group": "39f8f4ea59532fc9",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "Status",
+        "label": "Last updated time",
+        "format": "{{msg.time_stamp}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": true,
+        "font": "Times New Roman,Times,serif",
+        "fontSize": "20",
+        "color": "#000000",
+        "x": 670,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "9d41d3c163359c29",
+        "type": "ui_button",
+        "z": "4f570ba73cb9775b",
+        "name": "Stop button",
+        "group": "39f8f4ea59532fc9",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Stop",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "1",
+        "payloadType": "str",
+        "topic": "CO326/G11/Stop",
+        "topicType": "msg",
+        "x": 190,
+        "y": 440,
+        "wires": [
+            [
+                "b633ed36d92a6615"
+            ]
+        ]
+    },
+    {
+        "id": "b633ed36d92a6615",
+        "type": "mqtt out",
+        "z": "4f570ba73cb9775b",
+        "name": "MQTT Out",
+        "topic": "UOP/CO326/E18/11/Stop",
+        "qos": "2",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "1aef09635993012d",
+        "x": 690,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "86d7e0de8009ccf9",
+        "type": "debug",
+        "z": "4f570ba73cb9775b",
+        "name": "Input Debugging",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 420,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "a398b0f0f0db159c",
+        "type": "function",
+        "z": "4f570ba73cb9775b",
+        "name": "Sound",
+        "func": "// Splitting variables\n// get the message\nlet message = msg.payload;\n\n// Splitting \n// UID, Time, Sound\nlet data = message.split(\"|\");\n\n// Define the output\nlet out = {};\n\n// Defining the object output\nout[\"value\"] = data[2];\nout[\"time_stamp\"] = data[1];\nout[\"UID\"] = data[0];\n\n// Return only the first value\nreturn out;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 200,
+        "wires": [
+            [
+                "f10a69a68eeea65d",
+                "e0493623446faba8",
+                "a718f6103115820d"
+            ]
+        ]
+    },
+    {
+        "id": "6093a5b35169520c",
+        "type": "function",
+        "z": "4f570ba73cb9775b",
+        "name": "Gas",
+        "func": "// Splitting variables\n// get the message\nlet message = msg.payload;\n\n// Splitting \n// UID, Time, Gas\nlet data = message.split(\"|\");\n\n// Define the output\nlet out = {};\n\n// Defining the object output\nout[\"value\"] = data[2];\nout[\"time_stamp\"] = data[1];\nout[\"UID\"] = data[0];\n\n// Return only the first value\nreturn out;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 260,
+        "wires": [
+            [
+                "fb1ef42de05545c8",
+                "e0493623446faba8",
+                "a718f6103115820d"
+            ]
+        ]
+    },
+    {
+        "id": "f6169cfb2c2aabef",
+        "type": "ui_table",
+        "z": "4f570ba73cb9775b",
+        "group": "399c3ce1888dc676",
+        "name": "Latest Data",
+        "order": 1,
+        "width": "9",
+        "height": "8",
+        "columns": [
+            {
+                "field": "topic",
+                "title": "Topic",
+                "width": "",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "value",
+                "title": "Data",
+                "width": "",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 0,
+        "cts": false,
+        "x": 690,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "c855cc851ef58e53",
+        "type": "mqtt in",
+        "z": "4f570ba73cb9775b",
+        "name": "MQTT IN",
+        "topic": "UOP/CO326/E18/11/Latest_get",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "1aef09635993012d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 520,
+        "wires": [
+            [
+                "f6169cfb2c2aabef",
+                "7fd26308d04ad7f8"
+            ]
+        ]
+    },
+    {
+        "id": "81d54f1f6506ed5e",
+        "type": "ui_button",
+        "z": "4f570ba73cb9775b",
+        "name": "Get data",
+        "group": "399c3ce1888dc676",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Get Latest Data",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Send",
+        "payloadType": "str",
+        "topic": "CO326/G11/Stop",
+        "topicType": "msg",
+        "x": 180,
+        "y": 580,
+        "wires": [
+            [
+                "1a3957088686d2f2"
+            ]
+        ]
+    },
+    {
+        "id": "1a3957088686d2f2",
+        "type": "mqtt out",
+        "z": "4f570ba73cb9775b",
+        "name": "MQTT Out",
+        "topic": "UOP/CO326/E18/11/Latest",
+        "qos": "2",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "1aef09635993012d",
+        "x": 690,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "7fd26308d04ad7f8",
+        "type": "debug",
+        "z": "4f570ba73cb9775b",
+        "name": "Table Debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 690,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "a718f6103115820d",
+        "type": "debug",
+        "z": "4f570ba73cb9775b",
+        "name": "Function Debugging",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "2a2d5f14250ad02a",
+        "type": "mqtt in",
+        "z": "4f570ba73cb9775b",
+        "name": "MQTT IN",
+        "topic": "UOP/CO326/E18/11/Buzzer",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "1aef09635993012d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 880,
+        "wires": [
+            [
+                "2c22aea2c6d01817",
+                "66f64d1ee238cd96"
+            ]
+        ]
+    },
+    {
+        "id": "31211de710a7caa7",
+        "type": "ui_led",
+        "z": "4f570ba73cb9775b",
+        "order": 1,
+        "group": "051cc324195e9028",
+        "width": "9",
+        "height": "2",
+        "label": "Temperature Warning",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "temp_on",
+                "valueType": "str"
+            },
+            {
+                "color": "#808080",
+                "value": "buzzer_off",
+                "valueType": "str"
+            }
+        ],
+        "allowColorForValueInMessage": true,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "Temp Buzer",
+        "x": 910,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "5f5e7de08cf3d3f4",
+        "type": "ui_led",
+        "z": "4f570ba73cb9775b",
+        "order": 2,
+        "group": "051cc324195e9028",
+        "width": "9",
+        "height": "2",
+        "label": "Gas Warning",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "gas_on",
+                "valueType": "str"
+            },
+            {
+                "color": "#808080",
+                "value": "buzzer_off",
+                "valueType": "str"
+            }
+        ],
+        "allowColorForValueInMessage": true,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "Gas Buzer",
+        "x": 910,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "2c22aea2c6d01817",
+        "type": "function",
+        "z": "4f570ba73cb9775b",
+        "name": "Buzzer Function",
+        "func": "\n// Get the message\nlet message = msg.payload;\n\n// Splitting using | delimeter\nlet data = message.split(\"|\");\n\n// Define the output\nlet out = {};\n// Define the structure of output\nout[\"temp\"] = false;\nout[\"gas\"] = false;\nout[\"sound\"] = false;\n\n// Comparison\n// Get the state of buzzer\nlet state = data[2];\n\n// Comparison\nif(state===\"TempBuzz\"){\n    out[\"temp\"] = true;\n    return {\n        \"payload\": \"temp_on\"\n    };\n}\nelse if(state===\"GasBuzz\"){\n    out[\"gas\"] = true;\n    return {\n        \"payload\" : \"gas_on\"\n    };\n}\nelse if(state===\"SoundBuzz\"){\n    out[\"sound\"] = true;\n    return {\n        \"payload\": \"sound_on\"\n    };\n}\n\n// Default return Buzzer off\nreturn {\n    \"payload\": \"buzzer_off\"\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 880,
+        "wires": [
+            [
+                "32acd0ef6deac0d1",
+                "302f1af0d5951bee",
+                "0f048df40a93fa96",
+                "f8d558d322d37da4"
+            ]
+        ]
+    },
+    {
+        "id": "66f64d1ee238cd96",
+        "type": "debug",
+        "z": "4f570ba73cb9775b",
+        "name": "In Debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 180,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "32acd0ef6deac0d1",
+        "type": "debug",
+        "z": "4f570ba73cb9775b",
+        "name": "Func Debug",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 650,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "f0d2a3a183de2c7b",
+        "type": "ui_led",
+        "z": "4f570ba73cb9775b",
+        "order": 3,
+        "group": "051cc324195e9028",
+        "width": "9",
+        "height": "2",
+        "label": "Sound Warning",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "sound_on",
+                "valueType": "str"
+            },
+            {
+                "color": "#808080",
+                "value": "buzzer_off",
+                "valueType": "str"
+            }
+        ],
+        "allowColorForValueInMessage": true,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "Sound Buzer",
+        "x": 910,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "fc987a069f34b13c",
+        "type": "ui_button",
+        "z": "4f570ba73cb9775b",
+        "name": "Buzzer Reset",
+        "group": "051cc324195e9028",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Reset Indicators",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "autorenew",
+        "payload": "buzzer_stop",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 660,
+        "y": 1100,
+        "wires": [
+            [
+                "31211de710a7caa7",
+                "f0d2a3a183de2c7b",
+                "5f5e7de08cf3d3f4"
+            ]
+        ]
+    },
+    {
+        "id": "6bb2ae6552188d01",
+        "type": "ui_button",
+        "z": "4f570ba73cb9775b",
+        "name": "Clear",
+        "group": "399c3ce1888dc676",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Clear Table",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "red",
+        "className": "",
+        "icon": "delete",
+        "payload": "{\"topic\":null,\"value\":null}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 170,
+        "y": 640,
+        "wires": [
+            [
+                "ee8e25a7be82400f"
+            ]
+        ]
+    },
+    {
+        "id": "ee8e25a7be82400f",
+        "type": "function",
+        "z": "4f570ba73cb9775b",
+        "name": "Clear",
+        "func": "// Passing null object array as payload\nmsg.payload = []\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 720,
+        "wires": [
+            [
+                "f6169cfb2c2aabef"
+            ]
+        ]
+    },
+    {
+        "id": "302f1af0d5951bee",
+        "type": "function",
+        "z": "4f570ba73cb9775b",
+        "name": "Temp Buzz State",
+        "func": "// Then examine the message buffer of inputs\nlet curr_state = msg.payload;\n\n// Return the temperature buzz is on\nif(curr_state===\"temp_on\"){\n    return {\n        \"payload\" : \"temp_on\"\n    };\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 880,
+        "wires": [
+            [
+                "31211de710a7caa7"
+            ]
+        ]
+    },
+    {
+        "id": "f8d558d322d37da4",
+        "type": "function",
+        "z": "4f570ba73cb9775b",
+        "name": "Gas Buzz State",
+        "func": "// Then examine the message buffer of inputs\nlet curr_state = msg.payload;\n\n// Return the temperature buzz is on\nif(curr_state===\"gas_on\"){\n    return {\n        \"payload\" : \"gas_on\"\n    };\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 1000,
+        "wires": [
+            [
+                "5f5e7de08cf3d3f4"
+            ]
+        ]
+    },
+    {
+        "id": "0f048df40a93fa96",
+        "type": "function",
+        "z": "4f570ba73cb9775b",
+        "name": "Sound Buzz State",
+        "func": "// Then examine the message buffer of inputs\nlet curr_state = msg.payload;\n\n// Return the temperature buzz is on\nif(curr_state===\"sound_on\"){\n    return {\n        \"payload\" : \"sound_on\"\n    };\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 940,
+        "wires": [
+            [
+                "f0d2a3a183de2c7b"
+            ]
+        ]
+    },
+    {
+        "id": "54b151a99a3f8c18",
+        "type": "ui_spacer",
+        "z": "4f570ba73cb9775b",
+        "name": "spacer",
+        "group": "051cc324195e9028",
+        "order": 4,
+        "width": "9",
+        "height": "2"
+    },
+    {
+        "id": "6fe419d98c25022c",
+        "type": "ui_spacer",
+        "z": "4f570ba73cb9775b",
+        "name": "spacer",
+        "group": "39f8f4ea59532fc9",
+        "order": 5,
+        "width": "9",
+        "height": "1"
+    },
+    {
+        "id": "1aef09635993012d",
+        "type": "mqtt-broker",
+        "name": "Hive MQ Web Client",
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "tls": "b49803ede9e85f6f",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "39f8f4ea59532fc9",
+        "type": "ui_group",
+        "name": "Sensor Data",
+        "tab": "410477aef9d0f8fb",
+        "order": 1,
+        "disp": true,
+        "width": "9",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "399c3ce1888dc676",
+        "type": "ui_group",
+        "name": "Database",
+        "tab": "410477aef9d0f8fb",
+        "order": 2,
+        "disp": true,
+        "width": "9",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "051cc324195e9028",
+        "type": "ui_group",
+        "name": "Actuator Indicator",
+        "tab": "410477aef9d0f8fb",
+        "order": 3,
+        "disp": true,
+        "width": "9",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "b49803ede9e85f6f",
+        "type": "tls-config",
+        "name": "",
+        "cert": "",
+        "key": "",
+        "ca": "",
+        "certname": "",
+        "keyname": "",
+        "caname": "",
+        "servername": "",
+        "verifyservercert": true,
+        "alpnprotocol": ""
+    },
+    {
+        "id": "410477aef9d0f8fb",
+        "type": "ui_tab",
+        "name": "Dashboard",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]
