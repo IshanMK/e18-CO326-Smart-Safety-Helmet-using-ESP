@@ -19,11 +19,11 @@ const char* password = "Jeewantha13";
 const char* mqtt_server = "broker.hivemq.com";
 const int mqtt_port = 1883;
 
-const char* tempTopic = "CO326/G11/Tempurature";
-const char* gasTopic = "CO326/G11/Gas";
-const char* stopTopic = "CO326/G11/Stop";
-const char* soundTopic = "CO326/G11/Sound";
-const char* buzzTopic = "CO326/G11/Buzzer";
+const char* tempTopic = "UOP/CO326/E18/11/Temperature";
+const char* gasTopic = "UOP/CO326/E18/11/Gas";
+const char* stopTopic = "UOP/CO326/E18/11/Stop";
+const char* soundTopic = "UOP/CO326/E18/11/Sound";
+const char* buzzTopic = "UOP/CO326/E18/11/Buzzer";
 ///////////////////////////////////////////////////////////////
 
 // Defining User ID (Area|Post|No)
@@ -33,7 +33,7 @@ const char* buzzTopic = "CO326/G11/Buzzer";
 #define THERMISTER A0
 #define GASSENSOR 12 // d6
 #define SOUNDSENSOR 13 // d7
-#define BUZZER 14 // D8
+#define BUZZER 5 // D8
 
 // Defining returning values of the sensor
 String UOP_CO_326_E18_11_tempurature;
@@ -42,6 +42,8 @@ String UOP_CO_326_E18_11_gas;
 bool UOP_CO_326_E18_11_gasVal;
 String UOP_CO_326_E18_11_sound;
 bool UOP_CO_326_E18_11_soundVal;
+
+String UOP_CO_326_E18_11_stop;
 
 // Defining input values for actuators
 String UOP_CO_326_E18_11_buzzer;
@@ -87,7 +89,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
  
   Serial.print("Message:");
   for (unsigned int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
+    UOP_CO_326_E18_11_stop = (char)payload[i];
+  }
+
+  Serial.println(UOP_CO_326_E18_11_stop);
+
+  if (UOP_CO_326_E18_11_stop == "1"){
+    Buzzer("SOS");
   }
  
   Serial.println();
@@ -130,20 +138,31 @@ String time(){
 //////////////////////// SENSORS ///////////////////////////////////////////////
 /////////////// Thermometer ///////////////////////////////////////////////////
 float Thermometer(){
-  // Getting the raw sensor details (Voltage)
-  int Vo = analogRead(THERMISTER);
+  int total = 0;
+  /* int numSamples = 10;
+
+  // Read and sum multiple samples
+  for (int i = 0; i < numSamples; i++) {
+    total += analogRead(THERMISTER)*1.5;
+    delay(10);
+  } */
+
   String curTime = time();
-  // Calculate voltage
-  float v = Vo * 5.0 / 1024;
-  float Rt = 10 * v / (5 - v);
 
-  // Getting tempurature in Kelvin 
-  float tempK = 1 / (log(Rt / 10) / 3950 + 1 / (273.15 + 25));
+  // Calculate the average
+  float average = analogRead(THERMISTER) * 1.5;
 
-  // Getting the tempurature in Celsuius
-  float T = tempK - 293.15 + 18;
+  // Convert the average reading to temperature
+  float resistance = 10000.0 / (1023.0 / average - 1.0);  // Assuming a 10k thermistor
+  float steinhart = resistance / 10000.0;                // (R/Ro)
+  steinhart = log(steinhart);                            // ln(R/Ro)
+  steinhart /= 3950.0;                                   // 1/B * ln(R/Ro)
+  steinhart += 1.0 / (25.0 + 273.15);                    // + (1/To)
+  steinhart = (1.0 / steinhart) + 25;                           // Invert
+  steinhart -= 273.15;                                   // Convert to Celsius
+ 
 
-  UOP_CO_326_E18_11_tempurature = String(UID) + "|" + String(curTime) + "|" + String(T);
+  UOP_CO_326_E18_11_tempurature = String(UID) + "|" + String(curTime) + "|" + String(steinhart);
 
   // Give data to the broker that the buzzer is activated
   // snprintf (msg3, MSG_BUFFER_SIZE, "%f", T);
@@ -151,7 +170,7 @@ float Thermometer(){
   Serial.println(UOP_CO_326_E18_11_tempurature);
   client.publish(tempTopic, UOP_CO_326_E18_11_tempurature.c_str());
 
-  return T;
+  return steinhart;
 }
 
 ////////////////////////////// Gas Sensor ///////////////////////////////////////
@@ -223,7 +242,6 @@ bool SoundSensor(){
 void Buzzer(String input){
 
   if (input == "Gas"){
-    tone(BUZZER, 350, 1000);
     // Getting the time that occured
     String curTime = time();
 
@@ -233,9 +251,11 @@ void Buzzer(String input){
     Serial.print("Publish message: ");
     Serial.println(UOP_CO_326_E18_11_buzzer);
     client.publish(buzzTopic, UOP_CO_326_E18_11_buzzer.c_str());
+
+    tone(BUZZER, 2000);
+    delay(5000);
   }
   else if (input == "Temp"){
-    tone(BUZZER, 450, 1000);
     // Getting the time that occured
     String curTime = time();
 
@@ -245,9 +265,11 @@ void Buzzer(String input){
     Serial.print("Publish message: ");
     Serial.println(UOP_CO_326_E18_11_buzzer);
     client.publish(buzzTopic, UOP_CO_326_E18_11_buzzer.c_str());
+
+    tone(BUZZER, 1000);
+    delay(10000);
   }
   else if (input == "Sound"){
-    tone(BUZZER, 550, 1000);
     // Getting the time that occured
     String curTime = time();
 
@@ -257,7 +279,32 @@ void Buzzer(String input){
     Serial.print("Publish message: ");
     Serial.println(UOP_CO_326_E18_11_buzzer);
     client.publish(buzzTopic, UOP_CO_326_E18_11_buzzer.c_str());
+
+    tone(BUZZER, 1500);
+    delay(10000);
   }
+  else if(input == "Off"){
+    noTone(BUZZER);
+    // delay(10000);
+    // Getting the time that occured
+    String curTime = time();
+
+    UOP_CO_326_E18_11_buzzer = String(UID) + "|" + String(curTime) + "|" + String("Off");
+
+    // Give data to the broker that the buzzer is activated
+    /* Serial.print("Publish message: ");
+    Serial.println(UOP_CO_326_E18_11_buzzer);
+    client.publish(buzzTopic, UOP_CO_326_E18_11_buzzer.c_str()); */
+  }
+  else if (input == "SOS"){
+    for (int i=0; i<5; i++){
+      tone(BUZZER, 1700);
+      delay(1000);
+      noTone(BUZZER);
+      delay(500);
+    }
+
+  }  
 }
 
 
@@ -266,6 +313,9 @@ void setup() {
   pinMode(THERMISTER, INPUT);
   pinMode(GASSENSOR, INPUT);
   pinMode(SOUNDSENSOR, INPUT);
+  pinMode(BUZZER, OUTPUT);
+
+  digitalWrite(BUZZER, LOW);
 
   Serial.begin(115200);
 
@@ -298,8 +348,10 @@ void loop() {
 
   unsigned long now = millis();
 
-  while()
+  UOP_CO_326_E18_11_stop = "0";
 
+  // while(UOP_CO_326_E18_11_stop != "1"){
+  // while (UOP_CO_326_E18_11_stop == "1"){}
   if (now - lastMsg > 2000) {
     lastMsg = now;
     UOP_CO_326_E18_11_tempuratureVal = Thermometer();
@@ -312,11 +364,16 @@ void loop() {
     if (UOP_CO_326_E18_11_tempuratureVal>40){
         Buzzer("Temp");
     }
-    else if (UOP_CO_326_E18_11_gasVal){
+    if (UOP_CO_326_E18_11_gasVal){
         Buzzer("Gas");
     }
-    else if (UOP_CO_326_E18_11_soundVal){
+    if (UOP_CO_326_E18_11_soundVal){
         Buzzer("Sound");
     }
+    else if(UOP_CO_326_E18_11_tempuratureVal<40 && !UOP_CO_326_E18_11_gasVal && !UOP_CO_326_E18_11_soundVal) {
+      Buzzer("Off");
+    }
   }
+
+  // Serial.println("Device Stoped by the Admin");
 }
