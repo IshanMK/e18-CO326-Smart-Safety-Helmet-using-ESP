@@ -11,8 +11,8 @@
 */
 
 // WIFI Status (Confidental)
-const char* ssid = "JUA Xperia";
-const char* password = "Jeewantha13";
+const char* ssid = "********";
+const char* password = "*******";
 
 
 // MQTT Brocker Credentials
